@@ -8,8 +8,12 @@ Client -> Nginx -> App
 
 ## 구성 요소
 - Client: curl 또는 브라우저로 요청을 보내는 주체
-- Nginx: reverse proxy, 요청 수신 및 라우팅
-- App: 간단한 HTTP API 제공, health check 및 장애 재현 엔드포인트 포함 예정
+- Nginx: reverse proxy. 127.0.0.1:8080에서 요청을 받고 127.0.0.1:8000의 App으로 프록시한다.
+- App: FastAPI 기반 HTTP API. `/health`, `/ready`, `/slow`, `/error` 엔드포인트를 제공한다.
+
+## 포트 구성
+- Nginx: 127.0.0.1:8080
+- App: 127.0.0.1:8000
 
 ## 요청 흐름
 1. Client가 Nginx로 요청을 보낸다.
@@ -19,8 +23,14 @@ Client -> Nginx -> App
 
 ## 관측 포인트
 - Nginx access/error log
-- App stdout/stderr 또는 systemd journal
+- App stdout/stderr 또는 uvicorn 로그
 - 서버 CPU, 메모리, 디스크, 포트 상태
+
+## 현재 확인된 동작
+- `/health`는 200을 반환한다.
+- `/ready`는 `LAB_ENV`가 설정되지 않으면 503을 반환한다.
+- `/error`는 의도적으로 500을 반환한다.
+- `/slow`는 약 3초 지연 후 200을 반환한다.
 
 ## 예정된 확장
 - Prometheus / Grafana 추가
