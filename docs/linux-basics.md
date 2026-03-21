@@ -103,3 +103,8 @@ sudo systemctl enable mini-service-app
 - 서비스가 active (running) 상태인지
 - 재시작이 필요한 상황인지
 - 부팅 시 자동 시작이 설정되어 있는지
+
+### 메모
+- `systemctl stop`으로 서비스를 종료했을 때도 종료 코드에 따라 `failed`로 보일 수 있다.
+- 현재 실습에서는 `uvicorn`이 SIGTERM으로 종료되며 exit status 143을 반환했다.
+- service 파일에 `SuccessExitStatus=143`를 추가한 뒤에는 의도적인 stop이 `inactive (dead)`와 `Deactivated successfully`로 표시됐다.
