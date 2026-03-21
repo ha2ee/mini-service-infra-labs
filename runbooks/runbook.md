@@ -65,6 +65,14 @@ curl http://127.0.0.1:8080/ready
 
 ### 5. App 프로세스 확인
 ```bash
+sudo systemctl status mini-service-app
+```
+확인 포인트:
+- 서비스가 active (running) 상태인지
+- 비정상 종료 또는 restart 흔적이 있는지
+
+추가 확인 명령어:
+```bash
 ps -ef | grep uvicorn
 ```
 
@@ -96,12 +104,18 @@ sudo nginx -t
 
 ### 8. 로그 확인
 확인 대상:
-- uvicorn 실행 터미널 로그
 - `/var/log/nginx/access.log`
 - `/var/log/nginx/error.log`
+- `journalctl -u mini-service-app`
+
+확인 명령어:
+```bash
+sudo journalctl -u mini-service-app -n 50
+```
 
 확인 포인트:
-- `/health`, `/ready`, `/error` 요청이 실제로 들어왔는지
+- `/health`, `/ready`, `/error` 요청이 실제로 기록되는지
+- 에러 발생 시 어떤 메시지가 남는지
 - 502, 503, 500이 어떤 경로에서 발생했는지
 - `connect() failed` 같은 upstream 연결 에러가 있는지
 
@@ -143,7 +157,7 @@ sudo nginx -t
 - 현재는 정상적인 실습 동작
 
 ## 복구 초안
-- App 프로세스가 중지된 경우 App을 재실행한다.
+- App 서비스가 비정상 상태이면 `sudo systemctl restart mini-service-app`으로 재시작한다.
 - app direct는 정상인데 nginx proxy만 실패하면 Nginx `proxy_pass` 설정을 확인한다.
 - Nginx 설정 수정 후 `sudo nginx -t`로 검증한다.
 - 설정이 올바르면 `sudo systemctl reload nginx`로 반영한다.
