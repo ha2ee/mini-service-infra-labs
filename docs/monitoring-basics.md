@@ -18,6 +18,12 @@
 - Grafana Explore에서 `up` 쿼리 결과가 1로 표시됨
 - Node Exporter Full 대시보드에서 CPU, 메모리, 디스크, 네트워크 지표 확인
 
+## 기본 알람 확인
+- Prometheus alert rule 파일에 `InstanceDown` 규칙을 추가했다.
+- 조건은 `up == 0` 이고, 1분 이상 지속되면 `warning` 알람이 발생하도록 설정했다.
+- `node-exporter`를 중지한 뒤 Prometheus UI의 `Alerts` 탭에서 `InstanceDown`이 `firing` 상태로 바뀌는 것을 확인했다.
+- `node-exporter`를 다시 시작한 뒤 알람이 `inactive` 상태로 돌아오는 것도 확인했다.
+
 ## 기본 점검 방법
 - Prometheus UI: `Status -> Target health`
 - Grafana Data source: `Save & test`
