@@ -30,11 +30,19 @@
 - 새 Pod에 직접 `port-forward` 했을 때 `/health`는 200, `/ready`는 503을 반환했다.
 - 기존 Ready Pod는 유지되어 Service 가용성이 계속 보장되는 것을 확인했다.
 
+## ConfigMap key 참조 오류 재현
+- Deployment의 `configMapKeyRef.key`를 `LAB_ENV_WRONG`으로 변경했다.
+- Pod는 `CreateContainerConfigError` 상태가 되었고 컨테이너가 시작되지 않았다.
+- `kubectl describe pod`에서 `couldn't find key LAB_ENV_WRONG in ConfigMap default/mini-service-app-config` 이벤트를 확인했다.
+- 이 경우에는 readiness probe까지 가지 못하고, 컨테이너 설정 단계에서 바로 실패한다.
+- rolling update 중 기존 Ready Pod는 유지되어 Service 가용성이 계속 보장되는 것을 확인했다.
+
 ## 배운 점
 - liveness와 readiness는 서로 다른 목적을 가진다.
 - 프로세스가 살아 있어도 readiness는 실패할 수 있다.
 - Kubernetes는 readiness에 실패한 새 Pod를 바로 서비스에 포함하지 않는다.
-- rolling update 중에는 기존 Ready Pod와 새 NotReady Pod가 잠시 함께 존재할 수 있다.
+- `RollingUpdate` 중에는 기존 Ready Pod와 새 NotReady Pod가 잠시 함께 존재할 수 있다.
+- ConfigMap 참조 오류는 readiness 실패 이전 단계에서 `CreateContainerConfigError`로 나타날 수 있다.
 
 ## 기본 점검 명령어
 ```bash
