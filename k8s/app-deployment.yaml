@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: mini-service-infra-labs-app:latest
+          image: mini-service-infra-labs-app:v1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000

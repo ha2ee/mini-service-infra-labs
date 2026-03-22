@@ -3,6 +3,8 @@ import os
 
 from fastapi import FastAPI, HTTPException
 
+APP_VERSION = "v1"
+
 app = FastAPI(
     title="Mini Service Infra Lab App",
     description="Infra and ops practice app for health checks, failure simulation, and request flow testing",
@@ -15,6 +17,7 @@ def read_root():
     return {
         "service": "mini-service-infra-lab",
         "message": "app is running",
+        "version": APP_VERSION,
     }
 
 
