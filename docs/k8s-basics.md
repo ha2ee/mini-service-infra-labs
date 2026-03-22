@@ -9,7 +9,7 @@
 - Service
 
 ## 현재 구성
-- kind 클러스터: `mini-labs`
+- kind 클러스터: `mini-lab`
 - App 이미지: `mini-service-infra-labs-app:latest`
 - ConfigMap: `LAB_ENV=local`
 - Deployment: `mini-service-app`
@@ -45,6 +45,7 @@ kubectl logs deployment/mini-service-app
 kubectl describe pod <pod-name>
 kubectl port-forward service/mini-service-app 18000:80
 ```
+
 ## 메모
 - ConfigMap은 비민감 설정을 분리하는 데 사용했다.
 - readinessProbe는 `/ready`, livenessProbe는 `/health`를 사용했다.
