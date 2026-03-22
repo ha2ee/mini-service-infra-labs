@@ -44,6 +44,14 @@
 - Grafana Explore: `up`
 - Grafana Dashboard: Node Exporter Full
 
+## 운영 보조 CLI
+- `scripts/ops-check.py`는 app health/ready, Prometheus, Grafana, Alertmanager 연결 상태, 디스크/메모리 사용률을 한 번에 점검하는 Python CLI다.
+- 기본 실행 예시는 `python3 scripts/ops-check.py` 이다.
+- 실행 권한을 부여하면 `./scripts/ops-check.py` 로도 실행할 수 있다.
+- app `/health`와 `/ready`를 분리해서 확인하므로, 프로세스는 살아 있지만 준비 상태는 아닌 경우를 구분해서 볼 수 있다.
+- 현재 실습에서는 `/health`는 200, `/ready`는 `APP_SECRET_TOKEN`이 없을 때 503으로 표시되는 것도 확인했다.
+- monitoring stack은 Prometheus, Grafana, Alertmanager reachability를 함께 점검하도록 구성했다.
+
 ## 메모
 - `up == 1`은 target scrape 성공을 의미한다.
 - Prometheus는 수집, Grafana는 시각화를 담당한다.
