@@ -1,0 +1,31 @@
+# Monitoring Basics
+
+## 목적
+이 문서는 Prometheus, node-exporter, Grafana를 이용해 mini-service-infra-lab 환경의 기본 시스템 메트릭을 수집하고 시각화한 내용을 정리한다.
+
+## 구성 요소
+- Prometheus: 메트릭 수집
+- node-exporter: 호스트 시스템 메트릭 노출
+- Grafana: 메트릭 시각화
+
+## 실행 환경
+- Prometheus: `http://<VM-IP>:19090`
+- Grafana: `http://<VM-IP>:13000`
+
+## 확인한 동작
+- Prometheus Targets에서 `prometheus`, `node-exporter`가 모두 `UP`으로 표시됨
+- Grafana에서 Prometheus 데이터소스 연결 성공
+- Grafana Explore에서 `up` 쿼리 결과가 1로 표시됨
+- Node Exporter Full 대시보드에서 CPU, 메모리, 디스크, 네트워크 지표 확인
+
+## 기본 점검 방법
+- Prometheus UI: `Status -> Target health`
+- Grafana Data source: `Save & test`
+- Grafana Explore: `up`
+- Grafana Dashboard: Node Exporter Full
+
+## 메모
+- `up == 1`은 target scrape 성공을 의미한다.
+- Prometheus는 수집, Grafana는 시각화를 담당한다.
+- node-exporter는 호스트 시스템 메트릭을 Prometheus 형식으로 노출한다.
+
