@@ -11,12 +11,19 @@
 ## 실행 환경
 - Prometheus: `http://<VM-IP>:19090`
 - Grafana: `http://<VM-IP>:13000`
+- Alertmanager: `http://<VM-IP>:19093`
 
 ## 확인한 동작
 - Prometheus Targets에서 `prometheus`, `node-exporter`가 모두 `UP`으로 표시됨
 - Grafana에서 Prometheus 데이터소스 연결 성공
 - Grafana Explore에서 `up` 쿼리 결과가 1로 표시됨
 - Node Exporter Full 대시보드에서 CPU, 메모리, 디스크, 네트워크 지표 확인
+
+## Alertmanager 연동 확인
+- Prometheus에 `alerting` 설정을 추가하고 Alertmanager를 monitoring compose에 포함했다.
+- `InstanceDown` 알람이 `firing` 상태가 되면 Alertmanager UI에서도 해당 알람이 수신되는 것을 확인했다.
+- Alertmanager는 `alertname`, `job` 기준으로 alert를 묶어 보여주었다.
+- Prometheus와 Alertmanager UI 모두 상태 변경 후 새로고침으로 확인했다.
 
 ## 기본 알람 확인
 - Prometheus alert rule 파일에 `InstanceDown` 규칙을 추가했다.

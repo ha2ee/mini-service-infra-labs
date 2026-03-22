@@ -23,6 +23,15 @@ services:
     volumes:
       - '/:/host:ro,rslave'
 
+  alertmanager:
+    image: prom/alertmanager
+    container_name: mini-lab-alertmanager
+    ports:
+      - "19093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    restart: unless-stopped
+
   grafana:
     image: grafana/grafana
     container_name: mini-lab-grafana
