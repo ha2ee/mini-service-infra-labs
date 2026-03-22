@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mini-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mini-service-app
+  template:
+    metadata:
+      labels:
+        app: mini-service-app
+    spec:
+      containers:
+        - name: app
+          image: mini-service-infra-labs-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: LAB_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: mini-service-app-config
+                  key: LAB_ENV
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
