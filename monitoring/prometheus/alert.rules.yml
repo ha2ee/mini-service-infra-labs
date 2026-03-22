@@ -9,3 +9,21 @@ groups:
         annotations:
           summary: "Instance {{ $labels.instance }} is down"
           description: "{{ $labels.job }} target {{ $labels.instance }} has been down for more than 1 minute."
+
+      - alert: HostDiskUsageHigh
+        expr: (1 - (node_filesystem_avail_bytes{mountpoint="/", fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/", fstype!="tmpfs"})) * 100 > 80
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk usage is high on {{ $labels.instance }}"
+          description: "Root filesystem usage on {{ $labels.instance }} is above 80% for more than 1 minute."
+
+      - alert: HostMemoryUsageHigh
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 80
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Memory usage is high on {{ $labels.instance }}"
+          description: "Memory usage on {{ $labels.instance }} is above 80% for more than 1 minute."
