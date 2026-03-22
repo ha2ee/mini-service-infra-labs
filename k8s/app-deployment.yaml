@@ -24,6 +24,11 @@ spec:
                 configMapKeyRef:
                   name: mini-service-app-config
                   key: LAB_ENV
+            - name: APP_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: mini-service-app-secret
+                  key: APP_SECRET_TOKEN
           readinessProbe:
             httpGet:
               path: /ready

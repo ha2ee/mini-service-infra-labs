@@ -32,10 +32,15 @@ def readiness_check():
     if not lab_env:
         raise HTTPException(status_code=503, detail="LAB_ENV is not set")
 
+    app_secret_token = os.getenv("APP_SECRET_TOKEN")
+    if not app_secret_token:
+        raise HTTPException(status_code=503, detail="APP_SECRET_TOKEN is not set")
+
     return {
         "status": "ready",
         "message": "app is ready to serve traffic",
         "lab_env": lab_env,
+        "secret_loaded": True,
     }
 
 

@@ -23,6 +23,11 @@
 - `kubectl get svc`
 - `kubectl port-forward service/mini-service-app 18000:80`
 
+## Secret 적용 확인
+- `Secret` 리소스를 생성하고 `APP_SECRET_TOKEN`을 Pod 환경변수로 주입했다.
+- `/ready` 응답에 `secret_loaded: true`가 포함되는 것을 확인했다.
+- `kubectl rollout status deployment/mini-service-app`으로 새 Deployment가 정상적으로 반영된 것을 확인했다.
+
 ## readiness 실패 재현
 - Deployment에서 `LAB_ENV`를 빈 값으로 override했다.
 - 새 Pod는 `0/1 Running` 상태가 되었고 `Ready=False`로 표시됐다.
@@ -35,6 +40,13 @@
 - Pod는 `CreateContainerConfigError` 상태가 되었고 컨테이너가 시작되지 않았다.
 - `kubectl describe pod`에서 `couldn't find key LAB_ENV_WRONG in ConfigMap default/mini-service-app-config` 이벤트를 확인했다.
 - 이 경우에는 readiness probe까지 가지 못하고, 컨테이너 설정 단계에서 바로 실패한다.
+- `RollingUpdate` 중 기존 Ready Pod는 유지되어 Service 가용성이 계속 보장되는 것을 확인했다.
+
+## Secret key 참조 오류 재현
+- Deployment의 `secretKeyRef.key`를 `APP_SECRET_TOKEN_WRONG`으로 변경했다.
+- 새 Pod는 `CreateContainerConfigError` 상태가 되었고 컨테이너가 시작되지 않았다.
+- `kubectl describe pod`에서 `couldn't find key APP_SECRET_TOKEN_WRONG in Secret default/mini-service-app-secret` 이벤트를 확인했다.
+- 이 경우에도 readiness probe까지 가지 못하고, 컨테이너 설정 단계에서 바로 실패한다.
 - rolling update 중 기존 Ready Pod는 유지되어 Service 가용성이 계속 보장되는 것을 확인했다.
 
 ## 배운 점
@@ -43,6 +55,8 @@
 - Kubernetes는 readiness에 실패한 새 Pod를 바로 서비스에 포함하지 않는다.
 - `RollingUpdate` 중에는 기존 Ready Pod와 새 NotReady Pod가 잠시 함께 존재할 수 있다.
 - ConfigMap 참조 오류는 readiness 실패 이전 단계에서 `CreateContainerConfigError`로 나타날 수 있다.
+- Secret은 Pod 환경변수로 주입할 수 있고, 잘못된 참조는 컨테이너 시작 실패로 이어질 수 있다.
+- Secret 참조 오류도 ConfigMap 참조 오류와 마찬가지로 `CreateContainerConfigError`를 만들 수 있다.
 
 ## 기본 점검 명령어
 ```bash
