@@ -30,6 +30,12 @@
 - primary에 기록한 key가 replica에서 조회되는 것을 통해 복제가 정상 동작하는 것을 확인했다.
 - `INFO replication` 결과에서 replica가 primary와 정상 연결된 상태를 확인했다.
 
+## TTL / expiration 확인
+- `SETEX cache:key 30 "hello-cache"`로 TTL이 있는 key를 생성했다.
+- `TTL cache:key`를 확인했을 때 남은 시간이 감소하는 것을 확인했다.
+- 만료 전에는 `GET cache:key` 결과가 `"hello-cache"`였고, 만료 후에는 `(nil)`로 바뀌었다.
+- 만료 후 `TTL cache:key`는 `-2`를 반환했고, replica에서도 동일하게 key가 사라진 것을 확인했다.
+
 ## 장애 시나리오: primary down
 - `redis-primary`를 중지한 뒤 replica에서 `INFO replication`을 확인했다.
 - 이때 `master_link_status:down` 상태를 확인했다.
@@ -41,6 +47,7 @@
 - replica는 기본적으로 read-only 상태이므로 primary가 내려가도 자동으로 writable primary 역할을 하지 않는다.
 - persistence와 replication은 서로 다른 목적을 가진다.
 - persistence는 재시작 이후 데이터 유지에 가깝고, replication은 복제본 유지와 읽기 분산 관점에 가깝다.
+- Redis는 TTL 기반으로 캐시 만료를 제어할 수 있으며, 만료된 key는 primary와 replica 모두에서 사라진다.
 
 ## 다음에 더 볼 것
 - Redis persistence 옵션 차이(RDB vs AOF) 정리
