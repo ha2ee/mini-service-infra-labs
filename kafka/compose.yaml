@@ -1,0 +1,22 @@
+services:
+  kafka:
+    image: apache/kafka:4.0.0
+    container_name: mini-lab-kafka
+    hostname: kafka
+    ports:
+      - "19092:9092"
+    environment:
+      CLUSTER_ID: "kraft-cluster-01"
+      KAFKA_ENABLE_KRAFT: "yes"
+    volumes:
+      - ./config/server.properties:/opt/kafka/config/kraft/server.properties:ro
+      - kafka-data:/var/lib/kafka/data
+    command: >
+      bash -c "
+      /opt/kafka/bin/kafka-storage.sh format -t $$CLUSTER_ID -c /opt/kafka/config/kraft/server.properties --ignore-formatted &&
+      /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/kraft/server.properties
+      "
+    restart: unless-stopped
+  
+volumes:
+  kafka-data: {}
